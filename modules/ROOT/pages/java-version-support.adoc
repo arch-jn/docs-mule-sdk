@@ -6,11 +6,11 @@ Communicating the Java compatibility of your custom module also ensures:
 
 * Safe upgrades
 +
-Users can determine whether their Mule applications can safely upgrade to Java 17, ensuring a smooth transition and avoiding potential issues.
+Users can determine whether their Mule applications can safely upgrade to run on a given Java version, ensuring a smooth transition and avoiding potential issues.
 
 * User experience
 +
-Providing clear information about Java compatibilty enhances the user experience, especially for Anypoint Exchange users who rely on this information for selecting modules. 
+Providing clear information about Java compatibility enhances the user experience, especially for Anypoint Exchange users who rely on this information for selecting modules. 
 
 == Specify Java Compatibility
 
@@ -23,7 +23,7 @@ To specify Java compatibility of your custom module:
 <dependency>
    <groupId>org.mule.sdk</groupId>
    <artifactId>mule-sdk-api</artifactId>
-   <version>0.7.0</version>
+   <version>0.10.1</version>
 </dependency>
 ----
 
@@ -39,11 +39,31 @@ public class DatabaseConnector {
 }
 ----
 
-You can mark your custom connector as compatible with Java 17 only; however, you must ensure that no adoption or backward compatibility issues exist. 
+[[bytecode_level]]
+. Ensure the bytecode level of the compiled classes of your custom module can be used in the lowest supported Java version by setting the `java.release.version` property in the pom.xml, for example:
++
+[source,xml,linenums]
+----
+    <parent>
+        <groupId>org.mule.extensions</groupId>
+        <artifactId>mule-modules-parent</artifactId>
+        <version>1.9.0</version>
+    </parent>
+
+    <properties>
+        <java.release.version>8</java.release.version>
+    </properties>
+----
+
+[[jdk_8]]
++
+NOTE: If the version of `mule-modules-parent` is lower than 1.9.0, all code, including third-party dependencies, *must* be compiled for Java 8, and you must use Java 8 to build the connector.
+
+You can mark your custom connector as compatible with a single Java version only; however, you must ensure that no adoption or backward compatibility issues exist. 
 
 When you deploy a Mule app, Mule verifies that all modules in the Mule app are compatible with the Java version. If Mule finds an incompatibility, Mule throws an error and the application does not deploy. 
 
-If your code is compatible with Java 17 but you do not declare Java 17 compatibility, you can still get a successful test run (only when running a test on Java 8).
+If your code is compatible with a given Java version but you do not declare that compatibility, you can still get a successful test run (only when running a test on Java 8).
 
 == See Also
 
